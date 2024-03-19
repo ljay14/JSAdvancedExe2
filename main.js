@@ -1,46 +1,40 @@
 const btnInsertUpdate = document.getElementById("btnInsertUpdate");
 const btnClearItems = document.getElementById("btnClearItems");
 const btnClear = document.getElementById("btnClear");
+const btnSaveData = document.getElementById("btnSaveData");
 const tblRecords = document.getElementById("tblRecords");
+const sortCriteriaSelect = document.getElementById("sortCriteria");
+const sortOrderSelect = document.getElementById("sortOrder");
 
-let arrRecords = new Array();
+let arrRecords = JSON.parse(localStorage.getItem('records')) || [];
+
 const tblTHsLabels = ["First Name", "Middle Name", "Last Name", "Age", "Action"];
 
+iterateRecords();
 
-if(arrRecords.length == 0) {
+if (arrRecords.length == 0) {
     document.getElementById("status").style.display = "inline";
     document.getElementById("status").innerHTML = "No Records...";
 } else {
     document.getElementById("status").style.display = "none";
 }
 
-const storedProducts = localStorage.getItem('arrRecords');
-
-if(storeInfo){
-    infoRecords = JSON.parse(storeInfo);
-}
-function saveInfo(){
-    localStorage.setItem(`arrRecords`, JSON.stringify(arrRecords));
-}
-
 btnInsertUpdate.addEventListener("click", () => {
-
     const inputTxt = document.getElementsByTagName("input");
 
     if(btnInsertUpdate.value == "insert") {
-
         for(const txt of inputTxt) {
-            if(txt.value == " " || txt.value == "") {
+            if(txt.value.trim() == "") {
                 alert("Please complete all the text inputs!");
                 return;
-            }
+               }
         }
 
         let infoRecord = {
-            fname: inputTxt[0].value,
-            mname: inputTxt[1].value,
-            lname: inputTxt[2].value,
-            age:   parseInt(inputTxt[3].value)      
+            fname: inputTxt[0].value.trim(),
+            mname: inputTxt[1].value.trim(),
+            lname: inputTxt[2].value.trim(),
+            age:   parseInt(inputTxt[3].value.trim())      
         };
     
         for(const txt of inputTxt) {
@@ -48,26 +42,20 @@ btnInsertUpdate.addEventListener("click", () => {
         }
       
         arrRecords.push(infoRecord);
-        saveInfo();
+
+        sortAndDisplayRecords();
         iterateRecords();
-    
-        console.log(inputTxt);
-        console.log(infoRecord);
-        console.log(arrRecords);
-
     } else {
-
         for(const txt of inputTxt) {
-            if(txt.value == " " || txt.value == "") {
+            if(txt.value.trim() == "") {
                 alert("Please complete all the text inputs!");
                 return;
             }
         }
-
-        arrRecords[parseInt(btnInsertUpdate.value)].fname = inputTxt[0].value;
-        arrRecords[parseInt(btnInsertUpdate.value)].mname = inputTxt[1].value;
-        arrRecords[parseInt(btnInsertUpdate.value)].lname = inputTxt[2].value;
-        arrRecords[parseInt(btnInsertUpdate.value)].age = parseInt(inputTxt[3].value)  ;
+        arrRecords[parseInt(btnInsertUpdate.value)].fname = inputTxt[0].value.trim();
+        arrRecords[parseInt(btnInsertUpdate.value)].mname = inputTxt[1].value.trim();
+        arrRecords[parseInt(btnInsertUpdate.value)].lname = inputTxt[2].value.trim();
+        arrRecords[parseInt(btnInsertUpdate.value)].age = parseInt(inputTxt[3].value.trim());
         
         iterateRecords();
 
@@ -78,8 +66,6 @@ btnInsertUpdate.addEventListener("click", () => {
         btnInsertUpdate.innerHTML = "Insert";
         btnInsertUpdate.value = "insert";
     }
-
-
 });
 
 btnClear.addEventListener("click", () => {
@@ -95,6 +81,7 @@ btnClear.addEventListener("click", () => {
 
 btnClearItems.addEventListener("click", () => {
     arrRecords = [];
+    localStorage.clear();
 
     while(tblRecords.hasChildNodes()) {
         tblRecords.removeChild(tblRecords.firstChild);
@@ -108,16 +95,51 @@ btnClearItems.addEventListener("click", () => {
 
 });
 
+btnSaveData.addEventListener("click", () => {
+    localStorage.setItem('records', JSON.stringify(arrRecords));
+});
+
+sortCriteriaSelect.addEventListener("click", () => {
+    sortAndDisplayRecords();
+});
+
+sortOrderSelect.addEventListener("click", () => {
+    sortAndDisplayRecords();
+});
+
+function sortAndDisplayRecords() {
+    const sortCriteria = sortCriteriaSelect.value;
+    const sortOrder = sortOrderSelect.value;
+    if (sortCriteria && sortOrder) {
+        sortRecords(sortCriteria, sortOrder);
+        iterateRecords();
+    }
+}
+
+function sortRecords(criteria, order) {
+    arrRecords.sort((a, b) => {
+        const valueA = a[criteria];
+        const valueB = b[criteria];
+        if (order === "asc") {
+            if (valueA < valueB) return -1;
+            if (valueA > valueB) return 1;
+            return 0;
+        } else if (order === "desc") {
+            if (valueA > valueB) return -1;
+            if (valueA < valueB) return 1;
+            return 0;
+        }
+    });
+}
+
+
 
 function iterateRecords() {
-    // const tblTHs = new Array();
-
-    while(tblRecords.hasChildNodes()) {
+    while (tblRecords.hasChildNodes()) {
         tblRecords.removeChild(tblRecords.firstChild);
     }
 
-    if(!(arrRecords.length == 0)) {
-
+    if (arrRecords.length > 0) {
         document.getElementById("status").style.display = "none";
 
         const tblHeaderRow = document.createElement("tr");
@@ -125,12 +147,11 @@ function iterateRecords() {
         tblHeaderRow.style.borderTop = "1px solid black";
         tblHeaderRow.style.borderBottom = "1px solid black";
 
-        //Generate 4 Theads
-        for(let i=0 ; i < 5 ; i++) {
+        for (let i = 0; i < 5; i++) {
             const tblTHs = document.createElement("th");
             tblTHs.style.padding = "5px";
 
-            if(i != 4) {
+            if (i != 4) {
                 tblTHs.style.borderRight = "1px solid black";
             }
 
@@ -141,20 +162,19 @@ function iterateRecords() {
         tblHeader.appendChild(tblHeaderRow);
         tblRecords.appendChild(tblHeader);
 
-        //Generate Records
         const tblBody = document.createElement("tbody");
-    
-        arrRecords.forEach((rec, i)=> {
+
+        arrRecords.forEach((rec, i) => {
 
             const tblRow = document.createElement("tr");
             const tbdataFname = document.createElement("td");
             const tbdataMname = document.createElement("td");
             const tbdataLname = document.createElement("td");
-            const tbdataAge= document.createElement("td");
-            const tbdataActionBtn= document.createElement("td");
+            const tbdataAge = document.createElement("td");
+            const tbdataActionBtn = document.createElement("td");
             const btnDelete = document.createElement("button");
             const btnUpdate = document.createElement("button");
-            
+
             tbdataFname.style.borderRight = "1px solid black";
             tbdataFname.style.padding = "10px";
 
@@ -199,8 +219,6 @@ function iterateRecords() {
 
         tblRecords.appendChild(tblBody);
 
-
-
     } else {
         document.getElementById("status").style.display = "inline";
         document.getElementById("status").innerHTML = "No Records...";
@@ -208,7 +226,7 @@ function iterateRecords() {
 }
 
 function deleteData(i) {
-    arrRecords.splice(i,1);
+    arrRecords.splice(i, 1);
     iterateRecords();
 }
 
@@ -223,4 +241,3 @@ function updateData(i) {
     btnInsertUpdate.innerHTML = "Update";
     btnInsertUpdate.value = `${i}`;
 }
-

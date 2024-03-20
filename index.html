@@ -66,20 +66,20 @@
         </table>
     </fieldset>
     <div>
-    <button id="btnClearItems" style="margin-top: 10px;">Clear Records</button>
+    <button id="btnClearItems" style="margin-top: 10px; display: none;">Clear Records</button>
    
-        <label for="sortCriteria">Sort by:</label>
-        <select id="sortCriteria">
+        <label for="sortCriteria" id="labelsortCriteria" style="display: none;">Sort by:</label>
+        <select id="sortCriteria" style="display: none;">
             <option value="" style="margin-top: 10px;"> - - - - - - - - - - </option>
             <option value="fname">First Name</option>
             <option value="lname">Last Name</option>
         </select>
-        <select id="sortOrder">
+        <select id="sortOrder" style="display: none;">
             <option value="" style="margin-top: 10px;"> - - - - - - - - - - </option>
             <option value="asc">A-Z</option>
             <option value="desc">Z-A</option>
         </select>
-        <button id="btnSaveData" style="margin-top: 10px;">Save to Local Storage</button>
+        <button id="btnSaveData" style="margin-top: 10px; display: none;">Save to Local Storage</button>
     </div>
 </body>
 </html>

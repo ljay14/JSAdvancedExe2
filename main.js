@@ -22,32 +22,32 @@ if (arrRecords.length == 0) {
 btnInsertUpdate.addEventListener("click", () => {
     const inputTxt = document.getElementsByTagName("input");
 
-    if(btnInsertUpdate.value == "insert") {
-        for(const txt of inputTxt) {
-            if(txt.value.trim() == "") {
+    if (btnInsertUpdate.value == "insert") {
+        for (const txt of inputTxt) {
+            if (txt.value.trim() == "") {
                 alert("Please complete all the text inputs!");
                 return;
-               }
+            }
         }
 
         let infoRecord = {
             fname: inputTxt[0].value.trim(),
             mname: inputTxt[1].value.trim(),
             lname: inputTxt[2].value.trim(),
-            age:   parseInt(inputTxt[3].value.trim())      
+            age: parseInt(inputTxt[3].value.trim())
         };
-    
-        for(const txt of inputTxt) {
+
+        for (const txt of inputTxt) {
             txt.value = "";
         }
-      
+
         arrRecords.push(infoRecord);
 
         sortAndDisplayRecords();
         iterateRecords();
     } else {
-        for(const txt of inputTxt) {
-            if(txt.value.trim() == "") {
+        for (const txt of inputTxt) {
+            if (txt.value.trim() == "") {
                 alert("Please complete all the text inputs!");
                 return;
             }
@@ -56,10 +56,10 @@ btnInsertUpdate.addEventListener("click", () => {
         arrRecords[parseInt(btnInsertUpdate.value)].mname = inputTxt[1].value.trim();
         arrRecords[parseInt(btnInsertUpdate.value)].lname = inputTxt[2].value.trim();
         arrRecords[parseInt(btnInsertUpdate.value)].age = parseInt(inputTxt[3].value.trim());
-        
+
         iterateRecords();
 
-        for(const txt of inputTxt) {
+        for (const txt of inputTxt) {
             txt.value = "";
         }
 
@@ -71,7 +71,7 @@ btnInsertUpdate.addEventListener("click", () => {
 btnClear.addEventListener("click", () => {
     const inputTxt = document.getElementsByTagName("input");
 
-    for(const txt of inputTxt) {
+    for (const txt of inputTxt) {
         txt.value = "";
     }
 
@@ -82,8 +82,8 @@ btnClear.addEventListener("click", () => {
 btnClearItems.addEventListener("click", () => {
     arrRecords = [];
     localStorage.clear();
-
-    while(tblRecords.hasChildNodes()) {
+    
+    while (tblRecords.hasChildNodes()) {
         tblRecords.removeChild(tblRecords.firstChild);
     }
 
@@ -92,6 +92,12 @@ btnClearItems.addEventListener("click", () => {
 
     btnInsertUpdate.innerHTML = "Insert";
     btnInsertUpdate.value = "insert";
+
+    document.getElementById("btnClearItems").style.display = "none";
+    document.getElementById("btnSaveData").style.display = "none";
+    document.getElementById("labelsortCriteria").style.display = "none";
+    document.getElementById("sortCriteria").style.display = "none";
+    document.getElementById("sortOrder").style.display = "none";
 
 });
 
@@ -218,6 +224,14 @@ function iterateRecords() {
         });
 
         tblRecords.appendChild(tblBody);
+
+        if (!(arrRecords.length == 0)) {
+            document.getElementById("btnClearItems").style.display = "inline";
+            document.getElementById("btnSaveData").style.display = "inline";
+            document.getElementById("labelsortCriteria").style.display = "inline";
+            document.getElementById("sortCriteria").style.display = "inline";
+            document.getElementById("sortOrder").style.display = "inline";
+        }
 
     } else {
         document.getElementById("status").style.display = "inline";
